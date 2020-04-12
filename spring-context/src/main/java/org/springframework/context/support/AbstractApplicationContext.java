@@ -517,19 +517,43 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			/**
+			 * lhx 代码注释
+			 * 设置context 启动时间，active状态，
+			 * 初始化PropertySources 并设置到env环境
+			 */
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			/**
+			 * lhx 代码注释
+			 * cas设置beanFactory 刷新状态，返回BeanFactory
+			 */
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			/**
+			 * lhx 代码注释
+			 * 准备beanFactory，
+			 * 设置classLoader，添加bean表达式解析器，
+			 * 添加 ApplicationContextAwareProcessor 这个bean后置处理主要功能是调用ApplicationContextAware EnvironmentAware的aware的接口
+			 * 添加自动注入忽略的接口
+			 */
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				/**
+				 * lhx 代码注释
+				 * 该方法是在当前5.0.X版本中是个空实现
+				 */
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				/**
+				 * lhx 代码注释
+				 * 执行用户自定义的BeanFactoryPostProcessor，（自定义的应理解为没有被spring管理的）
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -646,12 +670,29 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		// Tell the internal bean factory to use the context's class loader etc.
 		beanFactory.setBeanClassLoader(getClassLoader());
-		//添加bean表达式解析器
+		/**
+		 * lhx 代码注释
+		 * 添加bean表达式解析器，解析bean的表达式
+		 */
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+
+		/**
+		 * lhx 代码注释
+		 * 添加资源编辑注册器
+		 */
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
+		/**
+		 * lhx 代码注释
+		 * 添加 ApplicationContextAwareProcessor 这个bean后置处理主要功能是调用ApplicationContextAware EnvironmentAware的aware的接口
+		 *
+		 */
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+		/**
+		 * lhx 代码注释
+		 * 添加自动注入忽略的的bean类型
+		 */
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -677,6 +718,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Register default environment beans.
+		/**
+		 * lhx 代码注释
+		 * 容器中添加下面几个环境bean
+		 */
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
@@ -704,6 +749,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		/**
+		 * lhx 代码注释
+		 * 执行自定义的BeanFactoryPostProcessor
+		 * getBeanFactoryPostProcessors() 获取自定义的beanFactoryPostProcessor
+		 */
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime

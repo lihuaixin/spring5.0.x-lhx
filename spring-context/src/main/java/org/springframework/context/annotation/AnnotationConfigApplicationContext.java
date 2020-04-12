@@ -64,7 +64,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	public AnnotationConfigApplicationContext() {
 		/**
 		 * lhx 代码注释
-		 * AnnotatedBeanDefinition 读取器
+		 * new 一个AnnotatedBeanDefinition 读取器，
+		 * 1读取器构造方法内部获取取并创建环境env
+		 * 2
 		 */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		this.scanner = new ClassPathBeanDefinitionScanner(this);

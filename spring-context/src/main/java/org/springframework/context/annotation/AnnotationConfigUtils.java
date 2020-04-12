@@ -144,19 +144,35 @@ public class AnnotationConfigUtils {
 	 */
 	public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
-
+		/**
+		 * lhx 代码注释
+		 * 获取bean工厂
+		 */
 		DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
 		if (beanFactory != null) {
 			if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {
+				/**
+				 * lhx 代码注释
+				 * AnnotationAwareOrderComparator 主要用来排序 @Order 和@Priority
+				 */
 				beanFactory.setDependencyComparator(AnnotationAwareOrderComparator.INSTANCE);
 			}
 			if (!(beanFactory.getAutowireCandidateResolver() instanceof ContextAnnotationAutowireCandidateResolver)) {
+				/**
+				 * lhx 代码注释
+				 * ContextAnnotationAutowireCandidateResolver自动装配，提供了提供对限定符注释和懒加载的功能
+				 */
 				beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());
 			}
 		}
 
-		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
 
+		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
+		/**
+		 * lhx 代码注释
+		 * 下面的代码判断有没有这些beanName的beanDefinition 如果没有，挨个去注册这些beanDefinition（把beanName 和beanDefinition
+		 * 添加到beanFactory的beanDefinitionNames和beanDefinitionMap中）
+		 */
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);

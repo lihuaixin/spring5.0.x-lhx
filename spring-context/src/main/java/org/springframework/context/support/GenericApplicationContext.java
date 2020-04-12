@@ -107,6 +107,10 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * @see #refresh
 	 */
 	public GenericApplicationContext() {
+		/**
+		 * lhx 代码注释
+		 * new一个DefaultListableBeanFactory beanFactory实例对象
+		 */
 		this.beanFactory = new DefaultListableBeanFactory();
 	}
 
