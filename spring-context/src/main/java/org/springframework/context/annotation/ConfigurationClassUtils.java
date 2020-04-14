@@ -108,6 +108,12 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
+		/**
+		 * lhx 代码注释
+		 * 判断注解元信息是不是@configuration 注解，如果是标记为full
+		 * 如果不是判断是不是Component ComponentScan Import ImportResource Bean 如果是标记为lite
+		 * 然后设置排序值，然后返回true
+		 */
 
 		if (isFullConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);

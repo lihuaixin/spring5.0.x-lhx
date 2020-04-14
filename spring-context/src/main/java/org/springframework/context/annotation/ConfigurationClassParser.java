@@ -167,6 +167,10 @@ class ConfigurationClassParser {
 			BeanDefinition bd = holder.getBeanDefinition();
 			try {
 				if (bd instanceof AnnotatedBeanDefinition) {
+					/**
+					 * lhx 代码注释
+					 * 注解的beanDefinition 走这个解析逻辑
+					 */
 					parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
 				}
 				else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
@@ -199,6 +203,10 @@ class ConfigurationClassParser {
 	}
 
 	protected final void parse(AnnotationMetadata metadata, String beanName) throws IOException {
+		/**
+		 * lhx 代码注释
+		 * 处理ConfigurationClass
+		 */
 		processConfigurationClass(new ConfigurationClass(metadata, beanName));
 	}
 
@@ -223,6 +231,10 @@ class ConfigurationClassParser {
 		}
 
 		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+		/**
+		 * lhx 代码注释
+		 * 如果处理过就不重复处理
+		 */
 		if (existingClass != null) {
 			if (configClass.isImported()) {
 				if (existingClass.isImported()) {
@@ -242,6 +254,10 @@ class ConfigurationClassParser {
 		// Recursively process the configuration class and its superclass hierarchy.
 		SourceClass sourceClass = asSourceClass(configClass);
 		do {
+			/**
+			 * lhx 代码注释
+			 * 重点 真正处理的逻辑在这里
+			 */
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass);
 		}
 		while (sourceClass != null);
@@ -265,6 +281,10 @@ class ConfigurationClassParser {
 		processMemberClasses(configClass, sourceClass);
 
 		// Process any @PropertySource annotations
+		/**
+		 * lhx 代码注释
+		 * 如果config类加了 PropertySources 就去处理具体处理逻辑就是读注解的属性
+		 */
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
@@ -278,20 +298,40 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @ComponentScan annotations
+		/**
+		 * lhx 代码注释
+		 * 判断有没有ComponentScans 和 ComponentScan 注解如果有注解就去
+		 */
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
 		if (!componentScans.isEmpty() &&
 				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
 			for (AnnotationAttributes componentScan : componentScans) {
 				// The config class is annotated with @ComponentScan -> perform the scan immediately
+				/**
+				 * lhx 代码注释
+				 * 调用this.componentScanParser.parse然后new 一个ClassPathBeanDefinitionScanner 去扫描
+				 * 扫描的时候对 componentScan注解里指定的属性 包，排除的包，过滤，懒加载
+				 * 去扫描得到扫描的beanDefinitionHolder
+				 */
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
 				// Check the set of scanned definitions for any further config classes and parse recursively if needed
+				/**
+				 * lhx 代码注释
+				 * 循环检查解析
+				 *
+				 */
 				for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
 					BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
 					if (bdCand == null) {
 						bdCand = holder.getBeanDefinition();
 					}
+					/**
+					 * lhx 代码注释
+					 *判断注解元信息是不是@configuration 注解，如果是标记为full 如果不是在判断是不是Component ComponentScan Import ImportResource Bean 如果是标记为lite，然后返回true
+					 * 如果返回true 就去递归调用parse解析bd
+					 */
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
 						parse(bdCand.getBeanClassName(), holder.getBeanName());
 					}

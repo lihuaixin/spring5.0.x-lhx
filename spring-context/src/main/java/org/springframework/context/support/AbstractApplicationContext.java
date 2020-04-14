@@ -552,7 +552,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Invoke factory processors registered as beans in the context.
 				/**
 				 * lhx 代码注释
-				 * 执行用户自定义的BeanFactoryPostProcessor，（自定义的应理解为没有被spring管理的）
+				 * 执行用户自定义的BeanFactoryPostProcessor，（自定义的应理解为没有被spring管理的）和 spring内部自定义的BeanFactoryPostProcessor
 				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
