@@ -329,7 +329,7 @@ class ConfigurationClassParser {
 					}
 					/**
 					 * lhx 代码注释
-					 *判断注解元信息是不是@configuration 注解，如果是标记为full 如果不是在判断是不是Component ComponentScan Import ImportResource Bean 如果是标记为lite，然后返回true
+					 * 判断注解元信息是不是@configuration 注解，如果是标记为full 如果不是在判断是不是Component ComponentScan Import ImportResource Bean 如果是标记为lite，然后返回true
 					 * 如果返回true 就去递归调用parse解析bd
 					 */
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
@@ -340,6 +340,11 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @Import annotations
+		/**
+		 * lhx 代码注释
+		 * 处理@Import 注解 通过getImport（sourceClass）循环判断是不是自定义注解如果是自定义注解就递归获取import value 获取import注解
+		 * 的value属性
+		 */
 		processImports(configClass, sourceClass, getImports(sourceClass), true);
 
 		// Process any @ImportResource annotations
@@ -355,6 +360,10 @@ class ConfigurationClassParser {
 		}
 
 		// Process individual @Bean methods
+		/**
+		 * lhx 代码注释
+		 * 处理类里面 方法上加了的@Bean的方法
+		 */
 		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
 		for (MethodMetadata methodMetadata : beanMethods) {
 			configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
@@ -549,6 +558,10 @@ class ConfigurationClassParser {
 	private Set<SourceClass> getImports(SourceClass sourceClass) throws IOException {
 		Set<SourceClass> imports = new LinkedHashSet<>();
 		Set<SourceClass> visited = new LinkedHashSet<>();
+		/**
+		 * lhx 代码注释
+		 * 收集import的类
+		 */
 		collectImports(sourceClass, imports, visited);
 		return imports;
 	}
@@ -570,8 +583,17 @@ class ConfigurationClassParser {
 			throws IOException {
 
 		if (visited.add(sourceClass)) {
+			/**
+			 * lhx 代码注释
+			 * 循环类的注解列表
+			 */
 			for (SourceClass annotation : sourceClass.getAnnotations()) {
+
 				String annName = annotation.getMetadata().getClassName();
+				/**
+				 * lhx 代码注释
+				 * 判断如果注解报名不是java并且不是import注解，也就是自定义的注解，如果是自定义的注解那么就去递归解析这个注解获取
+				 */
 				if (!annName.startsWith("java") && !annName.equals(Import.class.getName())) {
 					collectImports(annotation, imports, visited);
 				}
@@ -642,6 +664,10 @@ class ConfigurationClassParser {
 			this.importStack.push(configClass);
 			try {
 				for (SourceClass candidate : importCandidates) {
+					/**
+					 * lhx 代码注释
+					 * 判断是不是ImportSelector
+					 */
 					if (candidate.isAssignable(ImportSelector.class)) {
 						// Candidate class is an ImportSelector -> delegate to it to determine imports
 						Class<?> candidateClass = candidate.loadClass();
@@ -653,8 +679,16 @@ class ConfigurationClassParser {
 									new DeferredImportSelectorHolder(configClass, (DeferredImportSelector) selector));
 						}
 						else {
+							/**
+							 * lhx 代码注释
+							 * 得到beanclassname
+							 */
 							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
 							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames);
+							/**
+							 * lhx 代码注释
+							 * 在去处理import的class里的import
+							 */
 							processImports(configClass, currentSourceClass, importSourceClasses, false);
 						}
 					}
@@ -662,8 +696,16 @@ class ConfigurationClassParser {
 						// Candidate class is an ImportBeanDefinitionRegistrar ->
 						// delegate to it to register additional bean definitions
 						Class<?> candidateClass = candidate.loadClass();
+						/**
+						 * lhx 代码注释
+						 * 反射得到这个ImportBeanDefinitionRegistrar
+						 */
 						ImportBeanDefinitionRegistrar registrar =
 								BeanUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class);
+						/**
+						 * lhx 代码注释
+						 * 然后执行 registrar 实现的aware接口的方法
+						 */
 						ParserStrategyUtils.invokeAwareMethods(
 								registrar, this.environment, this.resourceLoader, this.registry);
 						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata());
@@ -673,6 +715,10 @@ class ConfigurationClassParser {
 						// process it as an @Configuration class
 						this.importStack.registerImport(
 								currentSourceClass.getMetadata(), candidate.getMetadata().getClassName());
+						/**
+						 * lhx 代码注释
+						 * 如果import的value不是ImportSelector or ImportBeanDefinitionRegistrar 类就当成@Configuration 类处理
+						 */
 						processConfigurationClass(candidate.asConfigClass(configClass));
 					}
 				}

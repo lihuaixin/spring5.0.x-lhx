@@ -129,7 +129,7 @@ class ComponentScanAnnotationParser {
 		for (String pkg : basePackagesArray) {
 			/**
 			 * lhx 代码注释
-			 * 将待扫描路径下的类名称全部拿出来
+			 * 将待扫描包路径下的类名称全部拿出来
 			 */
 			String[] tokenized = StringUtils.tokenizeToStringArray(this.environment.resolvePlaceholders(pkg),
 					ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);

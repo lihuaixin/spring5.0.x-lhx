@@ -281,7 +281,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			}
 			/**
 			 * lhx 代码注释
-			 * beanDef 如果没有被标记为full或lite 就检查beandef是不是
+			 * beanDef 如果没有被标记为full或lite 就检查beandef是不是然后在标记
 			 */
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
@@ -339,7 +339,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		do {
 			/**
 			 * lhx 代码注释
-			 * 重要的代码
+			 * 重要的代码 去执行递归扫描
 			 */
 			parser.parse(candidates);
 			parser.validate();
@@ -353,6 +353,10 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+			/**
+			 * lhx 代码注释
+			 * 重要，加载config类中扫描的和import引入bean 的 bd
+			 */
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 
