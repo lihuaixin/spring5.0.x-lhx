@@ -355,7 +355,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			}
 			/**
 			 * lhx 代码注释
-			 * 重要，加载config类中扫描的和import引入bean 的 bd
+			 * 重要，加载config类中扫描的和import引入bean 的 bd，然后分类型去注册
 			 */
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);

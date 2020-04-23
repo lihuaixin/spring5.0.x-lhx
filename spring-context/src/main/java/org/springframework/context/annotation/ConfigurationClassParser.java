@@ -329,7 +329,8 @@ class ConfigurationClassParser {
 					}
 					/**
 					 * lhx 代码注释
-					 * 判断注解元信息是不是@configuration 注解，如果是标记为full 如果不是在判断是不是Component ComponentScan Import ImportResource Bean 如果是标记为lite，然后返回true
+					 * 判断注解元信息是不是@configuration 注解，如果是标记为full 如果不是在判断是不是Component ComponentScan Import
+					 * ImportResource Bean 如果是标记为lite，然后返回true
 					 * 如果返回true 就去递归调用parse解析bd
 					 */
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {

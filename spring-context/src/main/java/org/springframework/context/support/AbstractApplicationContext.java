@@ -557,21 +557,46 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				/**
+				 * lhx 代码注释
+				 * 得到所有的BeanPostProcessors 后置处理器然后添加到 spring容器中（beanFactory中）
+				 */
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				/**
+				 * lhx 代码注释
+				 * 初始化messageSource ，判断有没有messageSource，没有就创建一个，并添加到spring容器中
+				 */
 				initMessageSource();
 
+				/**
+				 * lhx 代码注释
+				 * 初始化spring 容器的ApplicationEventMulticaster，判断有没有这个bean，没有就创建一个，并添加到spring容器中
+				 */
 				// Initialize event multicaster for this context.
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				/**
+				 * lhx 代码注释
+				 * 调用刷新方法，空实现，未来可能会实现
+				 */
 				onRefresh();
 
 				// Check for listener beans and register them.
+				/**
+				 * lhx 代码注释
+				 * 得到所有的事件监听器，然后把所有的监听器添加注册到ApplicationEventMulticaster事件广播器中
+				 */
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				/**
+				 * lhx 代码注释
+				 * 重要 bean 的实例化
+				 *
+				 */
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.

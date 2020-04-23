@@ -144,6 +144,11 @@ final class PostProcessorRegistrationDelegate {
 
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			/**
+			 * lhx 代码注释
+			 * 执行spring内部BeanFactoryPostProcessor的postProcessBeanFactory（）方法，然后在执行用户自定义的BeanFactoryPostProcessor
+			 * 的postProcessBeanFactory（）方法
+			 */
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
